@@ -8,7 +8,7 @@ import com.tcs.employee.model.Employee;
 import com.tcs.employee.service.EmployeeService;
 import com.tcs.employee.service.EmployeeServiceImpl;
 
-public class Main {
+public class EmployeeMain {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub

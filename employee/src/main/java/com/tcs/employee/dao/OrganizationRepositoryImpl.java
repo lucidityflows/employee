@@ -174,13 +174,120 @@ public class OrganizationRepositoryImpl implements OrganizationRepository {
 	@Override
 	public Optional<List<Organization>> getOrganizations() {
 		// TODO Auto-generated method stub
-		return null;
+		Connection connection = null;
+		PreparedStatement pst = null;
+		ResultSet rs = null;
+		Organization org = null;
+		List<Organization> orgList = null;
+		connection = DBUtils.getConnection();
+		String getAllOrgSQL = "SELECT * FROM ORGANIZATION";
+		
+		try {
+			pst = connection.prepareStatement(getAllOrgSQL);
+			rs = pst.executeQuery();
+			connection.commit();
+			
+			if (rs.next()) {
+				orgList = new ArrayList<Organization>();
+				
+				do {
+					org = new Organization();
+					org.setId(rs.getLong("orgId"));
+					org.setName(rs.getString("orgName"));
+					org.setAddress(rs.getString("address"));
+					String[] values = rs.getString("departments").split(",");
+					List<Department> depList = new ArrayList<Department>();
+					for (String deptId: values) {
+						Department dep = new Department();
+						dep.setId(Long.parseLong(deptId));
+						depList.add(dep);
+					}
+					org.setDepartments(depList);
+					String[] values2 = rs.getString("employees").split(",");
+					List<Employee> empList = new ArrayList<Employee>();
+					for (String empId: values2) {
+						Employee emp = new Employee();
+						emp.setId(Long.parseLong(empId));
+						empList.add(emp);
+					}
+					org.setEmployees(empList);
+					orgList.add(org);
+				} while (rs.next());
+			} else {
+				return Optional.empty();
+			}
+		} catch (SQLException e) {
+			try {
+				connection.rollback();
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+			e.printStackTrace();
+			return Optional.empty();
+		} finally {
+			DBUtils.closeConnection(connection);
+		}
+		return Optional.of(orgList);
 	}
 
 	@Override
 	public Optional<List<Organization>> findByDepartmentId(long id) {
 		// TODO Auto-generated method stub
-		return null;
+		Connection connection = null;
+		PreparedStatement pst = null;
+		ResultSet rs = null;
+		Organization org = null;
+		List<Organization> orgList = null;
+		connection = DBUtils.getConnection();
+		String getAllOrgSQL = "SELECT * FROM ORGANIZATION WHERE orgId=?";
+		
+		try {
+			pst = connection.prepareStatement(getAllOrgSQL);
+			pst.setLong(1, id);
+			rs = pst.executeQuery();
+			connection.commit();
+			
+			if (rs.next()) {
+				orgList = new ArrayList<Organization>();
+				
+				do {
+					org = new Organization();
+					org.setId(rs.getLong("orgId"));
+					org.setName(rs.getString("orgName"));
+					org.setAddress(rs.getString("address"));
+					String[] values = rs.getString("departments").split(",");
+					List<Department> depList = new ArrayList<Department>();
+					for (String deptId: values) {
+						Department dep = new Department();
+						dep.setId(Long.parseLong(deptId));
+						depList.add(dep);
+					}
+					org.setDepartments(depList);
+					String[] values2 = rs.getString("employees").split(",");
+					List<Employee> empList = new ArrayList<Employee>();
+					for (String empId: values2) {
+						Employee emp = new Employee();
+						emp.setId(Long.parseLong(empId));
+						empList.add(emp);
+					}
+					org.setEmployees(empList);
+					orgList.add(org);
+				} while (rs.next());
+			} else {
+				return Optional.empty();
+			}
+		} catch (SQLException e) {
+			try {
+				connection.rollback();
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
+			e.printStackTrace();
+			return Optional.empty();
+		} finally {
+			DBUtils.closeConnection(connection);
+		}
+		return Optional.of(orgList);
 	}
 
 }
